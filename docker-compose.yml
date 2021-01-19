@@ -1,0 +1,41 @@
+version: '3.6'
+
+services:
+  app2:
+    container_name: "app2"
+    build:
+      context: .
+      dockerfile: app2/Dockerfile
+    ports:
+      - 3000:3000
+    volumes:
+      - ./app2:/app
+    depends_on:
+      - redis
+      - mysql
+      - app1
+
+  app1:
+    container_name: "app1"
+    build:
+      context: .
+      dockerfile: app1/Dockerfile
+    ports:
+      - 3001:3001
+    volumes:
+      - ./app1:/app
+
+  mysql:
+    container_name: "mysql"
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: "dev"
+      MYSQL_DATABASE: "app"
+    ports:
+      - "3306:3306"
+
+  redis:
+    container_name: redis
+    image: "redis:alpine"
+    expose:
+      - 6379
